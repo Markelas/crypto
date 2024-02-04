@@ -20,7 +20,7 @@ export default function AppHeader() {
     const [select, setSelect] = useState(false)
     const [modal, setModal] = useState(false)
     const [coin, setCoin] = useState(null)
-    const [drawer, setDrawer] = useState(null)
+    const [drawer, setDrawer] = useState(false)
 
     // Из контекста, с помощью созданного там хука, берем crypto
     const {crypto} = useCrypto()
@@ -47,24 +47,25 @@ export default function AppHeader() {
     }
 
     return (
-        <Layout.Header style={headerStyle}><Select
-            style={{ width: 250 }}
-            open={select}
-            onSelect={handleSelect}
-            onClick={() => setSelect((prev) => !prev)}
-            value="press / to open"
-            options={crypto.map(coin => ({
-                label: coin.name,
-                value: coin.id,
-                icon: coin.icon,
-            }))}
-            optionRender={(option) => (
-                <Space>
-                    {/* option.data это так требует оборачивать информацию библиотеку */}
-                    <img style={{width: 20}} src={option.data.icon} alt={option.data.label}/> {option.data.label}
-                </Space>
-            )}
-        />
+        <Layout.Header style={headerStyle}>
+            <Select
+                style={{ width: 250 }}
+                open={select}
+                onSelect={handleSelect}
+                onClick={() => setSelect((prev) => !prev)}
+                value="press / to open"
+                options={crypto.map(coin => ({
+                    label: coin.name,
+                    value: coin.id,
+                    icon: coin.icon,
+                }))}
+                optionRender={(option) => (
+                    <Space>
+                        {/* option.data это так требует оборачивать информацию библиотеку */}
+                        <img style={{width: 20}} src={option.data.icon} alt={option.data.label}/> {option.data.label}
+                    </Space>
+                )}
+            />
             <Button type="primary" onClick={() => setDrawer(true)}>Add Asset</Button>
 
             <Modal
@@ -75,8 +76,14 @@ export default function AppHeader() {
                 <CryptoInfoModal coin={coin}/>
             </Modal>
 
-            <Drawer width={600} title="Add Asset" onClose={() => setDrawer(false)} open={drawer}>
-                <AddAssetForm/>
+            <Drawer
+                width={600}
+                title="Add Asset"
+                onClose={() => setDrawer(false)}
+                open={drawer}
+                destroyOnClose
+            >
+                <AddAssetForm onClose={() => setDrawer(false)}/>
             </Drawer>
         </Layout.Header>
     )
